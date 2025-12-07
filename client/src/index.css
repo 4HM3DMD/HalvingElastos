@@ -196,3 +196,115 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+/* Glass morphism panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel-accent {
+  background: rgba(149, 181, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(149, 181, 255, 0.3);
+}
+
+/* Hover glow effect for cards */
+@media (hover: hover) and (pointer: fine) {
+  .hover-glow {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-glow:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 32px rgba(149, 181, 255, 0.15);
+  }
+}
+
+/* Pulsing glow animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(149, 181, 255, 0.1), 0 0 40px rgba(149, 181, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(149, 181, 255, 0.2), 0 0 60px rgba(149, 181, 255, 0.1);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Flip card animation container */
+.flip-card-container {
+  perspective: 400px;
+}
+
+.flip-card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Digit flip animation */
+@keyframes digit-flip-in {
+  0% {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes digit-flip-out {
+  0% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+}
+
+.digit-enter {
+  animation: digit-flip-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.digit-exit {
+  animation: digit-flip-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Subtle shimmer effect */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-gradient,
+  .digit-enter,
+  .digit-exit,
+  .flip-card {
+    animation: none;
+    transition: none;
+  }
+}

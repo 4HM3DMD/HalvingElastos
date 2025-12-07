@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
 
 const infoCards = [
   {
@@ -19,34 +20,58 @@ const infoCards = [
   },
 ];
 
-const FlipDigit = ({ digit }: { digit: string }) => (
-  <div className="w-[50px] sm:w-[60px] md:w-[70px] lg:w-[78.68px] h-[60px] sm:h-[70px] md:h-[80px] lg:h-[90px] relative flex-shrink-0">
-    <img
-      className="absolute top-0 left-px w-[calc(100%-4px)] h-[calc(50%-2px)]"
-      alt="Elastos"
-      src="/figmaAssets/elastos-1-1657x89600-2.png"
-    />
-    <img
-      className="absolute bottom-0 left-px w-[calc(100%-4px)] h-[calc(50%-2px)]"
-      alt="Elastos"
-      src="/figmaAssets/elastos-1-1657x89600-3.png"
-    />
-    <div className="absolute top-1/2 right-0 w-1 h-1.5 bg-white rounded-[0px_0px_4px_4px]" />
-    <div className="absolute top-1/2 left-0 w-1 h-1.5 bg-white rounded-[0px_0px_4px_4px]" />
-    <div className="absolute top-[calc(50%-6px)] right-0 w-1 h-1.5 bg-[#ffffffe6] rounded-[0px_0px_4px_4px] -rotate-180" />
-    <div className="absolute top-[calc(50%-6px)] left-px w-1 h-1.5 bg-[#ffffffe6] rounded-[0px_0px_4px_4px] -rotate-180" />
-    <div className="absolute bottom-0 left-0.5 w-[calc(100%-4px)] h-[calc(50%-2px)] rounded-[20px_20px_0px_0px] -rotate-180 bg-[linear-gradient(0deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0)_100%)]" />
-    <div className="absolute inset-0 flex items-center justify-center [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-[36px] sm:text-[44px] md:text-[52px] lg:text-[64px] text-center tracking-[1.44px] sm:tracking-[1.76px] md:tracking-[2.08px] lg:tracking-[2.56px] leading-[normal]">
-      {digit}
+const FlipDigit = memo(({ digit, prevDigit }: { digit: string; prevDigit: string }) => {
+  const hasChanged = digit !== prevDigit;
+  
+  return (
+    <div className="flip-card-container w-[50px] sm:w-[60px] md:w-[70px] lg:w-[78.68px] h-[60px] sm:h-[70px] md:h-[80px] lg:h-[90px] relative flex-shrink-0">
+      <div className="absolute inset-0 glass-panel rounded-lg overflow-hidden">
+        <img
+          className="absolute top-0 left-0 w-full h-1/2 object-cover opacity-80"
+          alt=""
+          src="/figmaAssets/elastos-1-1657x89600-2.png"
+        />
+        <img
+          className="absolute bottom-0 left-0 w-full h-1/2 object-cover opacity-80"
+          alt=""
+          src="/figmaAssets/elastos-1-1657x89600-3.png"
+        />
+        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+      
+      <div className="absolute top-1/2 right-0 w-1 h-1.5 bg-white/90 rounded-b" />
+      <div className="absolute top-1/2 left-0 w-1 h-1.5 bg-white/90 rounded-b" />
+      <div className="absolute top-[calc(50%-6px)] right-0 w-1 h-1.5 bg-white/80 rounded-b rotate-180" />
+      <div className="absolute top-[calc(50%-6px)] left-0 w-1 h-1.5 bg-white/80 rounded-b rotate-180" />
+      
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={digit}
+          initial={hasChanged ? { rotateX: -90, opacity: 0 } : false}
+          animate={{ rotateX: 0, opacity: 1 }}
+          exit={{ rotateX: 90, opacity: 0 }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          className="absolute inset-0 flex items-center justify-center [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-[36px] sm:text-[44px] md:text-[52px] lg:text-[64px] text-center tracking-[1.44px] sm:tracking-[1.76px] md:tracking-[2.08px] lg:tracking-[2.56px] leading-[normal] drop-shadow-lg"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {digit}
+        </motion.div>
+      </AnimatePresence>
     </div>
-  </div>
-);
+  );
+});
+
+FlipDigit.displayName = 'FlipDigit';
 
 const TimeSeparator = () => (
-  <div className="w-[7px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[27px] flex flex-col gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[13.2px] justify-center">
-    <div className="w-[6.73px] h-[6.73px] bg-white rounded-[3.37px]" />
-    <div className="w-[6.73px] h-[6.73px] bg-white rounded-[3.37px]" />
-  </div>
+  <motion.div 
+    className="w-[7px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[27px] flex flex-col gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[13.2px] justify-center"
+    animate={{ opacity: [0.5, 1, 0.5] }}
+    transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+  >
+    <div className="w-[6.73px] h-[6.73px] bg-[#94b5ff] rounded-full shadow-[0_0_8px_rgba(149,181,255,0.5)]" />
+    <div className="w-[6.73px] h-[6.73px] bg-[#94b5ff] rounded-full shadow-[0_0_8px_rgba(149,181,255,0.5)]" />
+  </motion.div>
 );
 
 interface TimeLeft {
@@ -54,6 +79,13 @@ interface TimeLeft {
   hours: number;
   minutes: number;
   seconds: number;
+}
+
+interface TimeLeftRef {
+  days: string[];
+  hours: string[];
+  minutes: string[];
+  seconds: string[];
 }
 
 export const ElastosHalving = (): JSX.Element => {
@@ -75,10 +107,25 @@ export const ElastosHalving = (): JSX.Element => {
   };
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
+  const prevTimeRef = useRef<TimeLeftRef>({
+    days: ['0', '0', '0'],
+    hours: ['0', '0'],
+    minutes: ['0', '0'],
+    seconds: ['0', '0'],
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      setTimeLeft(prev => {
+        const newTime = calculateTimeLeft();
+        prevTimeRef.current = {
+          days: prev.days.toString().padStart(3, "0").split(""),
+          hours: prev.hours.toString().padStart(2, "0").split(""),
+          minutes: prev.minutes.toString().padStart(2, "0").split(""),
+          seconds: prev.seconds.toString().padStart(2, "0").split(""),
+        };
+        return newTime;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
@@ -92,6 +139,11 @@ export const ElastosHalving = (): JSX.Element => {
     return num.toString().padStart(3, "0").split("");
   };
 
+  const daysDigits = formatLargeNumber(timeLeft.days);
+  const hoursDigits = formatDigit(timeLeft.hours);
+  const minutesDigits = formatDigit(timeLeft.minutes);
+  const secondsDigits = formatDigit(timeLeft.seconds);
+
   return (
     <div className="bg-[#141414] w-full min-h-screen flex flex-col items-center overflow-x-hidden pb-16">
       <div className="relative w-full flex flex-col items-center">
@@ -101,45 +153,69 @@ export const ElastosHalving = (): JSX.Element => {
             alt="Mask group"
             src="/figmaAssets/mask-group.png"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#141414]" />
         </div>
 
-        <div className="relative -mt-[80px] sm:-mt-[100px] md:-mt-[120px] lg:-mt-[140px] mb-4 sm:mb-6 md:mb-8 lg:mb-10">
+        <motion.div 
+          className="relative -mt-[80px] sm:-mt-[100px] md:-mt-[120px] lg:-mt-[140px] mb-4 sm:mb-6 md:mb-8 lg:mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
           <img
-            className="w-[140px] sm:w-[180px] md:w-[220px] lg:w-[258px] h-auto object-contain"
+            className="w-[140px] sm:w-[180px] md:w-[220px] lg:w-[258px] h-auto object-contain drop-shadow-[0_0_30px_rgba(149,181,255,0.3)]"
             alt="Elastos"
             src="/figmaAssets/elastos-1-1680x919--22--copy00-1.png"
           />
-        </div>
+        </motion.div>
 
-        <h1 className="text-[28px] sm:text-[34px] md:text-[40px] lg:text-[46px] text-center tracking-[1.12px] sm:tracking-[1.36px] md:tracking-[1.6px] lg:tracking-[1.84px] leading-[normal] [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white mb-6 sm:mb-8 md:mb-10 lg:mb-12 px-4">
+        <motion.h1 
+          className="text-[28px] sm:text-[34px] md:text-[40px] lg:text-[46px] text-center tracking-[1.12px] sm:tracking-[1.36px] md:tracking-[1.6px] lg:tracking-[1.84px] leading-[normal] [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white mb-6 sm:mb-8 md:mb-10 lg:mb-12 px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+        >
           Elastos Halving
-        </h1>
+        </motion.h1>
       </div>
 
-      <div className="w-full max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[964px] flex flex-col gap-6 sm:gap-8 md:gap-10 lg:gap-12 px-4 sm:px-6 md:px-8 lg:px-0">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="w-full lg:w-auto lg:flex-shrink-0 bg-[#ffffff0d] rounded-[20px] p-4 sm:p-5 md:p-6">
+      <motion.div 
+        className="w-full max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[964px] flex flex-col gap-6 sm:gap-8 md:gap-10 lg:gap-12 px-4 sm:px-6 md:px-8 lg:px-0"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+      >
+        <div className="flex flex-col lg:flex-row gap-4 animate-pulse-glow rounded-[20px]">
+          <div className="w-full lg:w-auto lg:flex-shrink-0 glass-panel rounded-[20px] p-4 sm:p-5 md:p-6">
             <div className="flex flex-col items-center gap-3 sm:gap-4">
-              <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal]">
+              <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/80 text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal] uppercase">
                 Days
               </div>
               <div className="flex gap-1 sm:gap-1.5 md:gap-2">
-                {formatLargeNumber(timeLeft.days).map((digit, index) => (
-                  <FlipDigit key={`day-${index}`} digit={digit} />
+                {daysDigits.map((digit, index) => (
+                  <FlipDigit 
+                    key={`day-${index}`} 
+                    digit={digit} 
+                    prevDigit={prevTimeRef.current.days[index] || '0'}
+                  />
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="w-full lg:flex-1 bg-[#ffffff0d] rounded-[20px] p-4 sm:p-5 md:p-6">
+          <div className="w-full lg:flex-1 glass-panel rounded-[20px] p-4 sm:p-5 md:p-6">
             <div className="flex flex-col sm:flex-row items-center justify-around sm:justify-between gap-4 sm:gap-2">
               <div className="flex flex-col items-center gap-3 sm:gap-4">
-                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal]">
+                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/80 text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal] uppercase">
                   Hours
                 </div>
                 <div className="flex gap-1 sm:gap-1.5 md:gap-2 items-center">
-                  {formatDigit(timeLeft.hours).map((digit, index) => (
-                    <FlipDigit key={`hour-${index}`} digit={digit} />
+                  {hoursDigits.map((digit, index) => (
+                    <FlipDigit 
+                      key={`hour-${index}`} 
+                      digit={digit}
+                      prevDigit={prevTimeRef.current.hours[index] || '0'}
+                    />
                   ))}
                 </div>
               </div>
@@ -149,12 +225,16 @@ export const ElastosHalving = (): JSX.Element => {
               </div>
 
               <div className="flex flex-col items-center gap-3 sm:gap-4">
-                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal]">
+                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/80 text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal] uppercase">
                   Minutes
                 </div>
                 <div className="flex gap-1 sm:gap-1.5 md:gap-2 items-center">
-                  {formatDigit(timeLeft.minutes).map((digit, index) => (
-                    <FlipDigit key={`minute-${index}`} digit={digit} />
+                  {minutesDigits.map((digit, index) => (
+                    <FlipDigit 
+                      key={`minute-${index}`} 
+                      digit={digit}
+                      prevDigit={prevTimeRef.current.minutes[index] || '0'}
+                    />
                   ))}
                 </div>
               </div>
@@ -164,12 +244,16 @@ export const ElastosHalving = (): JSX.Element => {
               </div>
 
               <div className="flex flex-col items-center gap-3 sm:gap-4">
-                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal]">
+                <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/80 text-base sm:text-lg md:text-xl text-center tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-[normal] uppercase">
                   Seconds
                 </div>
                 <div className="flex gap-1 sm:gap-1.5 md:gap-2 items-center">
-                  {formatDigit(timeLeft.seconds).map((digit, index) => (
-                    <FlipDigit key={`second-${index}`} digit={digit} />
+                  {secondsDigits.map((digit, index) => (
+                    <FlipDigit 
+                      key={`second-${index}`} 
+                      digit={digit}
+                      prevDigit={prevTimeRef.current.seconds[index] || '0'}
+                    />
                   ))}
                 </div>
               </div>
@@ -177,8 +261,8 @@ export const ElastosHalving = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="w-full bg-[#ffffff0d] rounded-[20px] py-4 sm:py-5 md:py-6 px-4 text-center">
-          <span className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] lg:tracking-[0.72px] leading-[normal]">
+        <div className="w-full glass-panel rounded-[20px] py-4 sm:py-5 md:py-6 px-4 text-center">
+          <span className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/70 text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] lg:tracking-[0.72px] leading-[normal]">
             Estimated date & time of reward drop:{" "}
           </span>
           <span className="[font-family:'PP_Telegraf-Regular',Helvetica] font-normal text-[#94b5ff] text-xs sm:text-sm md:text-base lg:text-lg tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] lg:tracking-[0.72px] leading-[normal]">
@@ -188,40 +272,49 @@ export const ElastosHalving = (): JSX.Element => {
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 lg:gap-[25px]">
           {infoCards.map((card, index) => (
-            <Card
+            <motion.div
               key={`info-card-${index}`}
-              className="w-full sm:flex-1 h-auto min-h-[70px] sm:min-h-[76px] md:min-h-[82px] bg-[#95b5ff1a] rounded-2xl border-[0.5px] border-solid border-[#94b5ff]"
+              className="w-full sm:flex-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 + index * 0.1, ease: "easeOut" }}
             >
-              <CardContent className="p-4 sm:p-5 md:p-6 h-full flex items-center">
-                <img
-                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 flex-shrink-0"
-                  alt={card.label}
-                  src={card.icon}
-                />
-                <div className="ml-3 sm:ml-4 md:ml-5 lg:ml-[20px] flex flex-col">
-                  <div className="flex items-center justify-start [font-family:'PP_Telegraf-Regular',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-6 sm:leading-7 md:leading-8 whitespace-nowrap">
-                    {card.value}
+              <Card
+                className="w-full h-auto min-h-[70px] sm:min-h-[76px] md:min-h-[82px] glass-panel-accent rounded-2xl hover-glow cursor-default"
+              >
+                <CardContent className="p-4 sm:p-5 md:p-6 h-full flex items-center">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex-shrink-0 flex items-center justify-center bg-[#94b5ff]/10 rounded-lg">
+                    <img
+                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
+                      alt={card.label}
+                      src={card.icon}
+                    />
                   </div>
-                  <div className="flex items-center justify-start [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-xs sm:text-[13px] md:text-sm tracking-[0.48px] sm:tracking-[0.52px] md:tracking-[0.56px] leading-4 sm:leading-[18px] md:leading-5 whitespace-nowrap">
-                    {card.label}
+                  <div className="ml-3 sm:ml-4 md:ml-5 flex flex-col">
+                    <div className="flex items-center justify-start [font-family:'PP_Telegraf-Regular',Helvetica] font-normal text-white text-base sm:text-lg md:text-xl tracking-[0.64px] sm:tracking-[0.72px] md:tracking-[0.80px] leading-6 sm:leading-7 md:leading-8 whitespace-nowrap">
+                      {card.value}
+                    </div>
+                    <div className="flex items-center justify-start [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/60 text-xs sm:text-[13px] md:text-sm tracking-[0.48px] sm:tracking-[0.52px] md:tracking-[0.56px] leading-4 sm:leading-[18px] md:leading-5 whitespace-nowrap">
+                      {card.label}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      <footer className="mt-auto w-full bg-[#141414] border-t border-[rgba(255,255,255,0.1)] py-4 sm:py-5 md:py-6 lg:py-8">
+      <footer className="mt-auto w-full bg-[#141414] border-t border-white/5 py-4 sm:py-5 md:py-6 lg:py-8">
         <div className="w-full max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[1422px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
-            <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-xs sm:text-sm md:text-base tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] leading-5 whitespace-nowrap">
+            <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/50 text-xs sm:text-sm md:text-base tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] leading-5 whitespace-nowrap">
               © 2025 Elastos. All rights reserved.
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 sm:w-[14px] sm:h-[14px] md:w-4 md:h-4 bg-[url(/figmaAssets/elastos.png)] bg-cover bg-[50%_50%]" />
-              <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-xs sm:text-sm md:text-base tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] leading-5 whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 sm:w-5 sm:h-5 bg-[url(/figmaAssets/elastos.png)] bg-cover bg-center" />
+              <div className="[font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white/50 text-xs sm:text-sm md:text-base tracking-[0.48px] sm:tracking-[0.56px] md:tracking-[0.64px] leading-5 whitespace-nowrap">
                 Elastos
               </div>
             </div>
