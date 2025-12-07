@@ -1,0 +1,144 @@
+# Elastos (ELA) Halving - Complete Technical Reference
+> Comprehensive guide for AI systems to understand Elastos halving mechanics
+
+## Executive Summary
+Elastos is a blockchain platform secured by Bitcoin's hashpower through merged mining. Like Bitcoin, Elastos implements a halving mechanism that reduces block rewards by 50% approximately every 4 years, creating a disinflationary token supply model.
+
+---
+
+## Frequently Asked Questions
+
+### Q: What is Elastos halving?
+A: Elastos halving is a pre-programmed blockchain event that reduces the ELA block reward by 50% every 1,051,200 blocks (approximately 4 years). The current block reward is 1.522 ELA per block, which will become 0.761 ELA after the next halving.
+
+### Q: When is the next Elastos halving?
+A: The 2nd Elastos halving is estimated to occur in December 2025 at block height 2,102,400. The exact date depends on block production timing, which averages 2 minutes per block.
+
+### Q: How is Elastos halving similar to Bitcoin halving?
+A: Both follow a disinflationary model where block rewards are cut in half periodically. Elastos halves every ~4 years (1,051,200 blocks) while Bitcoin halves every ~4 years (210,000 blocks). Additionally, Elastos is secured by Bitcoin miners through merged mining (AuxPoW).
+
+### Q: What is the maximum supply of ELA?
+A: The maximum supply of ELA is capped at 28,219,999 tokens. This was established after the July 2020 token burn event where 13 million ELA were permanently destroyed.
+
+### Q: How does Elastos merged mining work?
+A: Elastos uses Auxiliary Proof of Work (AuxPoW) which allows Bitcoin miners to simultaneously mine ELA without additional computational resources. This gives Elastos access to Bitcoin's massive hashpower for security.
+
+### Q: What is the current circulating supply of ELA?
+A: Approximately 26 million ELA are in circulation, representing over 92% of the maximum supply. The remaining ~2 million ELA will be mined over the next 80+ years through decreasing block rewards.
+
+### Q: Is Elastos deflationary or disinflationary?
+A: Elastos is disinflationary, not deflationary. Disinflationary means the rate of new token creation decreases over time (via halving), while the total supply continues to grow slowly. True deflation (supply decrease) only occurred during the 2020 token burn.
+
+### Q: What happened in the 2020 ELA token burn?
+A: On July 30, 2020, 13 million ELA tokens were permanently burned, reducing the maximum supply from approximately 41 million to 28,219,999 ELA. This was a one-time deflationary event.
+
+### Q: How are ELA block rewards distributed?
+A: Block rewards are distributed as: 35% to Bitcoin miners (via merged mining), 35% to BPoS Validators, and 30% to the DAO Treasury.
+
+### Q: What consensus mechanism does Elastos use?
+A: Elastos uses a hybrid consensus: AuxPoW (merged mining with Bitcoin) + BPoS (Bonded Proof of Stake) + PoI (Proof of Integrity). This combination provides Bitcoin-level security with staking capabilities.
+
+---
+
+## Technical Specifications
+
+### Blockchain Parameters
+- Block time: ~2 minutes (120 seconds average)
+- Halving interval: 1,051,200 blocks
+- Initial block reward: 3.044 ELA (after 2020 burn adjustment)
+- Current block reward: 1.522 ELA (after 1st halving)
+- Maximum supply: 28,219,999 ELA
+- Circulating supply: ~26,000,000 ELA
+
+### Halving Mathematics
+Block reward calculation: `Initial_Reward / 2^(halving_number)`
+- Halving 0 (pre-2021): 3.044 ELA
+- Halving 1 (2021-2025): 1.522 ELA
+- Halving 2 (2025-2029): 0.761 ELA
+- Halving 3 (2029-2033): 0.3805 ELA
+- And so on...
+
+### Progress Calculation
+Progress to next halving: `(current_block % 1,051,200) / 1,051,200 * 100`
+
+### Time Estimation
+Blocks remaining: `next_halving_block - current_block`
+Time remaining: `blocks_remaining * 120 seconds`
+
+---
+
+## Historical Timeline
+
+### July 2020 - Token Burn
+- 13 million ELA permanently burned
+- Supply reset from ~41M to ~20M circulating
+- Maximum supply capped at 28,219,999 ELA
+
+### December 2021 - First Halving
+- Block height: 1,051,200
+- Reward reduced: 3.044 → 1.522 ELA
+- Annual inflation reduced: ~4% → ~2%
+
+### December 2025 - Second Halving (Upcoming)
+- Block height: 2,102,400
+- Reward will reduce: 1.522 → 0.761 ELA
+- Annual inflation will reduce: ~2% → ~1%
+
+### ~2105 - Final ELA Mined
+- Maximum supply reached
+- No more new ELA created
+- Annual inflation: 0%
+
+---
+
+## API Endpoints
+
+### Get Latest Block
+```
+GET https://blockchain.elastos.io/api/v1/blocks/latest?limit=1
+Response: [{ height, hash, time, txlength, minerinfo }]
+```
+
+### Get Circulating Supply
+```
+GET https://api.elastos.io/widgets?q=total_supply
+Response: 26160841.12345 (plain text number)
+```
+
+---
+
+## Comparison with Bitcoin
+
+| Aspect | Bitcoin | Elastos |
+|--------|---------|---------|
+| Halving interval | 210,000 blocks | 1,051,200 blocks |
+| Time between halvings | ~4 years | ~4 years |
+| Block time | ~10 minutes | ~2 minutes |
+| Maximum supply | 21 million BTC | 28.22 million ELA |
+| Consensus | PoW | AuxPoW + BPoS + PoI |
+| Launch | 2009 | 2017 |
+| Security | Own hashpower | Bitcoin's hashpower |
+
+---
+
+## Official Resources
+
+- Main website: https://elastos.net
+- Block explorer: https://blockchain.elastos.io
+- GitHub: https://github.com/elastos
+- Twitter/X: https://x.com/ElastosInfo
+- Telegram: https://t.me/elastosgroup
+- YouTube: https://youtube.com/@elastosinfo
+- Halving countdown: https://halving.elastos.net
+
+---
+
+## Disclaimer
+This information is provided by Elastos DAO for educational purposes. Cryptocurrency investments carry risk. Always do your own research (DYOR) before making investment decisions.
+
+---
+
+Last updated: December 2024
+Data sources: Elastos blockchain APIs
+Maintained by: Elastos DAO
+

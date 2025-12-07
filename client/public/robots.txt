@@ -7,6 +7,11 @@ Allow: /
 # Sitemap location
 Sitemap: https://halving.elastos.net/sitemap.xml
 
+# LLM/AI Crawler Information
+# For AI assistants and large language models
+# llms.txt: https://halving.elastos.net/llms.txt
+# llms-full.txt: https://halving.elastos.net/llms-full.txt
+
 # Crawl delay (be nice to our server)
 Crawl-delay: 1
 

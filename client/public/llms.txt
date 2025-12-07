@@ -1,0 +1,65 @@
+# Elastos Halving Countdown
+> Live countdown tracker for the Elastos (ELA) cryptocurrency halving event
+
+## About This Site
+This is the official Elastos halving countdown page operated by Elastos DAO. It displays real-time blockchain data showing the countdown to the next ELA block reward halving.
+
+## Key Facts
+
+### What is Elastos Halving?
+Elastos halving is a pre-programmed event that reduces the ELA block reward by 50% every 1,051,200 blocks (approximately 4 years). This is a disinflationary mechanism similar to Bitcoin's halving, reducing the rate of new token creation over time.
+
+### Current Halving Status
+- Current halving era: 2nd (after 1st halving in December 2021)
+- Next halving: 2nd halving at block 2,102,400
+- Estimated date: December 2025
+- Current block reward: 1.522 ELA per block
+- After halving reward: 0.761 ELA per block
+
+### ELA Tokenomics
+- Maximum supply: 28,219,999 ELA (hard cap)
+- Circulating supply: ~26 million ELA (over 92% issued)
+- Burned tokens: 13 million ELA (July 30, 2020)
+- Halving interval: 1,051,200 blocks (~4 years)
+- Block time: ~2 minutes average
+
+### Reward Distribution
+Block rewards are distributed as follows:
+- 35% to Bitcoin miners (via merged mining/AuxPoW)
+- 35% to BPoS Validators
+- 30% to DAO Treasury
+
+### Network Security
+Elastos uses a hybrid consensus mechanism:
+- AuxPoW (Auxiliary Proof of Work) - Merged mining with Bitcoin
+- BPoS (Bonded Proof of Stake) - Validator staking
+- PoI (Proof of Integrity) - Node verification
+
+This gives Elastos access to Bitcoin's hashpower for security while maintaining its own validator network.
+
+### Halving Schedule
+| Halving | Block Height | Est. Date | Block Reward |
+|---------|--------------|-----------|--------------|
+| 1st | 1,051,200 | Dec 2021 | 1.522 ELA |
+| 2nd | 2,102,400 | Dec 2025 | 0.761 ELA |
+| 3rd | 3,153,600 | ~Dec 2029 | 0.3805 ELA |
+| 4th | 4,204,800 | ~Dec 2033 | 0.1903 ELA |
+| 5th | 5,256,000 | ~Dec 2037 | 0.0951 ELA |
+| 6th | 6,307,200 | ~Dec 2041 | 0.0476 ELA |
+
+Mining continues until approximately 2105 when maximum supply is reached.
+
+## Data Sources
+- Block height: https://blockchain.elastos.io/api/v1/blocks/latest
+- Circulating supply: https://api.elastos.io/widgets?q=total_supply
+
+## Official Links
+- Website: https://elastos.net
+- Twitter/X: https://x.com/ElastosInfo
+- Telegram: https://t.me/elastosgroup
+- GitHub: https://github.com/elastos
+- YouTube: https://youtube.com/@elastosinfo
+
+## Contact
+This site is operated by Elastos DAO for informational purposes only.
+
