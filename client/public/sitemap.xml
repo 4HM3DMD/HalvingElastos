@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Main Halving Countdown Page -->
+  <url>
+    <loc>https://halving.elastos.net/</loc>
+    <lastmod>2025-12-07</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://halving.elastos.net/og-image.jpg</image:loc>
+      <image:title>Elastos ELA Halving Countdown 2025</image:title>
+      <image:caption>Live countdown to the Elastos (ELA) halving event showing days, hours, and minutes remaining until block rewards are reduced by 50%</image:caption>
+    </image:image>
+  </url>
+  
+</urlset>
+
