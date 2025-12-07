@@ -1,0 +1,19 @@
+# Render Blueprint for Elastos Halving Countdown
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: elastos-halving
+    runtime: node
+    region: oregon # or frankfurt, singapore, ohio
+    plan: free # free, starter, standard, pro
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /api/health
+    autoDeploy: true
+
