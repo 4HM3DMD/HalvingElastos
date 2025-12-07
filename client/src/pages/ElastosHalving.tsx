@@ -24,25 +24,11 @@ const FlipDigit = memo(({ digit, prevDigit }: { digit: string; prevDigit: string
   const hasChanged = digit !== prevDigit;
   
   return (
-    <div className="flip-card-container w-[50px] sm:w-[60px] md:w-[70px] lg:w-[78.68px] h-[60px] sm:h-[70px] md:h-[80px] lg:h-[90px] relative flex-shrink-0">
-      <div className="absolute inset-0 glass-panel rounded-lg overflow-hidden">
-        <img
-          className="absolute top-0 left-0 w-full h-1/2 object-cover opacity-80"
-          alt=""
-          src="/figmaAssets/elastos-1-1657x89600-2.png"
-        />
-        <img
-          className="absolute bottom-0 left-0 w-full h-1/2 object-cover opacity-80"
-          alt=""
-          src="/figmaAssets/elastos-1-1657x89600-3.png"
-        />
-        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    <div className="flip-card-container w-[50px] sm:w-[60px] md:w-[70px] lg:w-[80px] h-[65px] sm:h-[75px] md:h-[85px] lg:h-[95px] relative flex-shrink-0">
+      <div className="absolute inset-0 bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5">
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.03] to-transparent" />
+        <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-white/10" />
       </div>
-      
-      <div className="absolute top-1/2 right-0 w-1 h-1.5 bg-white/90 rounded-b" />
-      <div className="absolute top-1/2 left-0 w-1 h-1.5 bg-white/90 rounded-b" />
-      <div className="absolute top-[calc(50%-6px)] right-0 w-1 h-1.5 bg-white/80 rounded-b rotate-180" />
-      <div className="absolute top-[calc(50%-6px)] left-0 w-1 h-1.5 bg-white/80 rounded-b rotate-180" />
       
       <AnimatePresence mode="popLayout">
         <motion.div
@@ -51,8 +37,8 @@ const FlipDigit = memo(({ digit, prevDigit }: { digit: string; prevDigit: string
           animate={{ rotateX: 0, opacity: 1 }}
           exit={{ rotateX: 90, opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-          className="absolute inset-0 flex items-center justify-center [font-family:'PP_Telegraf-Ultralight',Helvetica] font-normal text-white text-[36px] sm:text-[44px] md:text-[52px] lg:text-[64px] text-center tracking-[1.44px] sm:tracking-[1.76px] md:tracking-[2.08px] lg:tracking-[2.56px] leading-[normal] drop-shadow-lg"
-          style={{ transformStyle: 'preserve-3d' }}
+          className="absolute inset-0 flex items-center justify-center font-light text-white text-[40px] sm:text-[48px] md:text-[56px] lg:text-[68px] text-center tracking-tight leading-none"
+          style={{ transformStyle: 'preserve-3d', fontFamily: 'system-ui, -apple-system, sans-serif' }}
         >
           {digit}
         </motion.div>
