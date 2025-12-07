@@ -158,42 +158,30 @@ export function useBlockchainData(pollInterval = 30000): UseBlockchainDataResult
     return () => clearInterval(intervalId);
   }, [fetchData, pollInterval]);
 
-  // Countdown timer - updates every minute (since we don't show seconds)
+  // Countdown calculation - based purely on blocks remaining
+  // No artificial time adjustment to stay honest about precision
+  // Updates only when new block data arrives from API
   useEffect(() => {
     if (!data) return;
 
-    const updateCountdown = () => {
-      const blocksRemaining = data.blocksRemaining;
-      const totalSecondsRemaining = blocksRemaining * AVG_BLOCK_TIME_SECONDS;
-      
-      // Adjust for time passed since last block update
-      const timeSinceUpdate = Math.floor((Date.now() - data.lastUpdated) / 1000);
-      const adjustedSeconds = Math.max(0, totalSecondsRemaining - timeSinceUpdate);
-      
-      const days = Math.floor(adjustedSeconds / 86400);
-      const hours = Math.floor((adjustedSeconds % 86400) / 3600);
-      const minutes = Math.floor((adjustedSeconds % 3600) / 60);
-      const seconds = adjustedSeconds % 60;
-      
-      setCountdown(prev => {
-        // Only update if minutes or higher have changed (avoid unnecessary re-renders)
-        if (prev.days === days && prev.hours === hours && prev.minutes === minutes) {
-          return prev;
-        }
-        // Save previous value before updating
-        prevCountdownRef.current = prev;
-        // Return new countdown
-        return { days, hours, minutes, seconds };
-      });
-    };
-
-    // Initial update
-    updateCountdown();
+    const blocksRemaining = data.blocksRemaining;
+    const totalSecondsRemaining = blocksRemaining * AVG_BLOCK_TIME_SECONDS;
     
-    // Update every 60 seconds (since we only show days/hours/minutes)
-    const timerId = setInterval(updateCountdown, 60000);
-
-    return () => clearInterval(timerId);
+    // Calculate time units directly from blocks (always even minutes since 2min/block)
+    const days = Math.floor(totalSecondsRemaining / 86400);
+    const hours = Math.floor((totalSecondsRemaining % 86400) / 3600);
+    const minutes = Math.floor((totalSecondsRemaining % 3600) / 60);
+    const seconds = 0; // Not displayed, kept for interface compatibility
+    
+    setCountdown(prev => {
+      // Only update if values have changed
+      if (prev.days === days && prev.hours === hours && prev.minutes === minutes) {
+        return prev;
+      }
+      // Save previous value for flip animation
+      prevCountdownRef.current = prev;
+      return { days, hours, minutes, seconds };
+    });
   }, [data]);
 
   return {
