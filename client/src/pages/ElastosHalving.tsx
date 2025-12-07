@@ -485,7 +485,7 @@ export const ElastosHalving = (): JSX.Element => {
                 className="text-white/50 text-xs sm:text-sm md:text-base text-center max-w-[550px] leading-relaxed px-2"
                 style={{ fontFamily: "'Geist', system-ui, sans-serif" }}
               >
-                ELA halving reduces the block reward by 50%, decreasing new coin supply and increasing scarcity, mirroring Bitcoin's deflationary model.
+                ELA halving reduces the block reward by 50%, decreasing the rate of new coin issuance and increasing scarcity, mirroring Bitcoin's disinflationary model.
               </p>
             </div>
 

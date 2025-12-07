@@ -63,14 +63,14 @@ export function SEO({ currentBlock, blocksRemaining, estimatedDate, progressPerc
       // Investment keywords
       'ELA price prediction',
       'Elastos investment',
-      'deflationary cryptocurrency',
+      'disinflationary cryptocurrency',
       'scarce crypto assets',
       'Bitcoin secured altcoins'
     ].join(', '));
 
     // Open Graph Tags (Facebook, LinkedIn, Discord)
     updateMeta('og:title', title, true);
-    updateMeta('og:description', `Track the live Elastos (ELA) halving countdown. ${progressPercent || '99'}% complete with ${blocksRemaining?.toLocaleString() || '~2,500'} blocks to go. Block rewards will halve from 1.522 to 0.761 ELA, similar to Bitcoin's deflationary model.`, true);
+    updateMeta('og:description', `Track the live Elastos (ELA) halving countdown. ${progressPercent || '99'}% complete with ${blocksRemaining?.toLocaleString() || '~2,500'} blocks to go. Block rewards will halve from 1.522 to 0.761 ELA, following Bitcoin's disinflationary model.`, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:url', 'https://halving.elastos.net', true);
     updateMeta('og:image', 'https://halving.elastos.net/og-image.jpg', true);
@@ -159,7 +159,7 @@ export function SEO({ currentBlock, blocksRemaining, estimatedDate, progressPerc
           "@type": "Event",
           "@id": "https://halving.elastos.net/#halving-event",
           "name": "Elastos (ELA) Second Halving",
-          "description": "The second Elastos halving event where block rewards will be reduced from 1.522 ELA to 0.761 ELA per block, following the same deflationary model as Bitcoin.",
+          "description": "The second Elastos halving event where block rewards will be reduced from 1.522 ELA to 0.761 ELA per block, following the same disinflationary model as Bitcoin.",
           "startDate": estimatedDate ? new Date(estimatedDate).toISOString() : "2025-12-10T00:00:00Z",
           "endDate": estimatedDate ? new Date(estimatedDate).toISOString() : "2025-12-10T00:00:00Z",
           "eventStatus": "https://schema.org/EventScheduled",
@@ -206,7 +206,7 @@ export function SEO({ currentBlock, blocksRemaining, estimatedDate, progressPerc
               "name": "How is Elastos halving similar to Bitcoin halving?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Like Bitcoin, Elastos follows a deflationary tokenomics model with periodic halving events. Both reduce block rewards by 50% to control inflation and increase scarcity. Additionally, Elastos is secured by Bitcoin's hashpower through merged mining (AuxPoW), making it one of the most secure blockchains after Bitcoin itself."
+                "text": "Like Bitcoin, Elastos follows a disinflationary tokenomics model with periodic halving events. Both reduce block rewards by 50% to control inflation and increase scarcity. Additionally, Elastos is secured by Bitcoin's hashpower through merged mining (AuxPoW), making it one of the most secure blockchains after Bitcoin itself."
               }
             },
             {
