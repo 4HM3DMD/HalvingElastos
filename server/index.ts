@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https:",
-    "connect-src 'self' https://blockchain.elastos.io https://api.elastos.io",
+    "connect-src 'self' https://blockchain.elastos.io",
     "frame-ancestors 'self'"
   ].join('; '));
   

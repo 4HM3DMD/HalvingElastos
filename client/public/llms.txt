@@ -50,8 +50,8 @@ This gives Elastos access to Bitcoin's hashpower for security while maintaining 
 Mining continues until approximately 2105 when maximum supply is reached.
 
 ## Data Sources
-- Block height: https://blockchain.elastos.io/api/v1/blocks/latest
-- Circulating supply: https://api.elastos.io/widgets?q=total_supply
+- Block height: https://blockchain.elastos.io/api/v1/blocks/latest (see https://blockchain.elastos.io/api-docs)
+- Circulating supply: https://blockchain.elastos.io/api/v1/supply (field: data.circulatingSupply) or /api/v1/supply/circulating
 
 ## Official Links
 - Website: https://elastos.net

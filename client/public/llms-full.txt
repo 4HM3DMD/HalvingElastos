@@ -95,14 +95,18 @@ Time remaining: `blocks_remaining * 120 seconds`
 
 ### Get Latest Block
 ```
-GET https://blockchain.elastos.io/api/v1/blocks/latest?limit=1
-Response: [{ height, hash, time, txlength, minerinfo }]
+GET https://blockchain.elastos.io/api/v1/blocks/latest
+Response envelope (v1): { "data": [ { height, hash, timestamp, txCount, minerinfo, ... } ] }
+(Explorer API: https://blockchain.elastos.io/api-docs — base /api/v1)
 ```
 
 ### Get Circulating Supply
 ```
-GET https://api.elastos.io/widgets?q=total_supply
-Response: 26160841.12345 (plain text number)
+GET https://blockchain.elastos.io/api/v1/supply
+Response: { "data": { "circulatingSupply": "18050711.96", "totalSupply": "...", "maxSupply": "28219999", ... } }
+
+GET https://blockchain.elastos.io/api/v1/supply/circulating
+Response: 18050711.96284343 (plain text number)
 ```
 
 ---

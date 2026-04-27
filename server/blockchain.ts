@@ -18,9 +18,10 @@ const logger = {
   success: (msg: string) => isDev && console.log(`[Blockchain] ✓ ${msg}`),
 };
 
-// API Endpoints
-const BLOCK_API = 'https://blockchain.elastos.io/api/v1/blocks/latest?limit=1';
-const SUPPLY_API = 'https://api.elastos.io/widgets?q=total_supply';
+// Elastos Main Chain Explorer API — https://blockchain.elastos.io/api-docs (Base: /api/v1)
+const EXPLORER_API_V1 = 'https://blockchain.elastos.io/api/v1';
+const BLOCK_LATEST_URL = `${EXPLORER_API_V1}/blocks/latest`;
+const SUPPLY_URL = `${EXPLORER_API_V1}/supply`;
 
 // Cache file path
 const CACHE_FILE = path.join(process.cwd(), 'blockchain-cache.json');
@@ -146,20 +147,60 @@ async function fetchWithRetry<T>(
   return null;
 }
 
-// Fetch latest block from Elastos API with retry
+// Fetch latest block from Elastos API with retry (v1 envelope: { data: Block[] } or legacy root array)
 async function fetchLatestBlock(): Promise<BlockData | null> {
-  return fetchWithRetry(BLOCK_API, async (response) => {
-    const blocks = await response.json();
-    return blocks[0] || null;
+  return fetchWithRetry(BLOCK_LATEST_URL, async (response) => {
+    const body: unknown = await response.json();
+    let row: Record<string, unknown> | null = null;
+    if (Array.isArray(body) && body[0] && typeof body[0] === 'object') {
+      row = body[0] as Record<string, unknown>;
+    } else if (body && typeof body === 'object' && 'data' in body) {
+      const envelope = body as { data?: unknown; error?: string };
+      if (typeof envelope.error === 'string' && envelope.error) {
+        throw new Error(envelope.error);
+      }
+      const d = envelope.data;
+      if (Array.isArray(d) && d[0] && typeof d[0] === 'object') {
+        row = d[0] as Record<string, unknown>;
+      } else if (d && typeof d === 'object' && !Array.isArray(d)) {
+        row = d as Record<string, unknown>;
+      }
+    }
+    if (!row) {
+      return null;
+    }
+    const height = Number(row.height);
+    const time = Number(row.time ?? row.timestamp);
+    const txlength = Number(row.txlength ?? row.txCount);
+    if (!Number.isFinite(height) || !Number.isFinite(time)) {
+      return null;
+    }
+    return {
+      height,
+      hash: String(row.hash ?? ''),
+      time,
+      txlength: Number.isFinite(txlength) ? txlength : 0,
+      minerinfo: String(row.minerinfo ?? ''),
+    };
   });
 }
 
-// Fetch circulating supply from Elastos API with retry
+// Fetch circulating supply (GET /api/v1/supply — data.circulatingSupply; plain /supply/circulating is also available)
 async function fetchCirculatingSupply(): Promise<number | null> {
-  return fetchWithRetry(SUPPLY_API, async (response) => {
-    const text = await response.text();
-    const supply = parseFloat(text.trim());
-    return isNaN(supply) ? null : supply;
+  return fetchWithRetry(SUPPLY_URL, async (response) => {
+    const body = (await response.json()) as {
+      data?: { circulatingSupply?: string };
+      error?: string;
+    };
+    if (body.error) {
+      throw new Error(body.error);
+    }
+    const raw = body.data?.circulatingSupply;
+    if (raw == null) {
+      return null;
+    }
+    const supply = parseFloat(String(raw).trim());
+    return Number.isNaN(supply) ? null : supply;
   });
 }
 
