@@ -53,8 +53,10 @@ export interface BlockchainData {
   // From API
   currentBlock: number;
   blockTime: number; // Unix timestamp of current block
-  circulatingSupply: number;
-  
+  circulatingSupply: number; // Liquid/freely-tradeable ELA
+  totalSupply: number;       // All mined ELA (incl. locked, staked, treasury)
+  issuedPercentage: number;  // totalSupply / maxSupply * 100 (from API)
+
   // Calculated
   halvingNumber: number;
   nextHalvingBlock: number;
@@ -64,8 +66,8 @@ export interface BlockchainData {
   afterHalvingReward: number;
   estimatedHalvingDate: string;
   estimatedHalvingTime: string;
-  remainingToMine: number;
-  
+  remainingToMine: number; // maxSupply - totalSupply
+
   // Meta
   lastUpdated: number;
   isFromCache: boolean;
@@ -75,6 +77,8 @@ interface CacheData {
   currentBlock: number;
   blockTime: number;
   circulatingSupply: number;
+  totalSupply: number;
+  issuedPercentage: number;
   lastUpdated: number;
 }
 
@@ -185,22 +189,40 @@ async function fetchLatestBlock(): Promise<BlockData | null> {
   });
 }
 
-// Fetch circulating supply (GET /api/v1/supply — data.circulatingSupply; plain /supply/circulating is also available)
-async function fetchCirculatingSupply(): Promise<number | null> {
+interface SupplyData {
+  circulatingSupply: number;
+  totalSupply: number;
+  issuedPercentage: number;
+}
+
+// Fetch supply data (GET /api/v1/supply)
+// totalSupply = all mined ELA (used for "issued" display); circulatingSupply = liquid only
+async function fetchSupplyData(): Promise<SupplyData | null> {
   return fetchWithRetry(SUPPLY_URL, async (response) => {
     const body = (await response.json()) as {
-      data?: { circulatingSupply?: string };
+      data?: {
+        circulatingSupply?: string;
+        totalSupply?: string;
+        issuedPercentage?: number;
+      };
       error?: string;
     };
     if (body.error) {
       throw new Error(body.error);
     }
-    const raw = body.data?.circulatingSupply;
-    if (raw == null) {
-      return null;
-    }
-    const supply = parseFloat(String(raw).trim());
-    return Number.isNaN(supply) ? null : supply;
+    const d = body.data;
+    if (!d) return null;
+    const circulatingSupply = parseFloat(String(d.circulatingSupply ?? '').trim());
+    const totalSupply = parseFloat(String(d.totalSupply ?? '').trim());
+    const issuedPercentage = Number(d.issuedPercentage ?? NaN);
+    if (Number.isNaN(circulatingSupply) || Number.isNaN(totalSupply)) return null;
+    return {
+      circulatingSupply,
+      totalSupply,
+      issuedPercentage: Number.isNaN(issuedPercentage)
+        ? Math.round((totalSupply / MAX_SUPPLY) * 10000) / 100
+        : issuedPercentage,
+    };
   });
 }
 
@@ -250,6 +272,8 @@ function buildBlockchainData(
   currentBlock: number,
   blockTime: number,
   circulatingSupply: number,
+  totalSupply: number,
+  issuedPercentage: number,
   isFromCache: boolean
 ): BlockchainData {
   const halvingNumber = calculateHalvingNumber(currentBlock);
@@ -259,12 +283,15 @@ function buildBlockchainData(
   const currentReward = calculateBlockReward(halvingNumber);
   const afterHalvingReward = currentReward / 2;
   const { date: estimatedHalvingDate, time: estimatedHalvingTime } = calculateEstimatedDate(blocksRemaining);
-  const remainingToMine = MAX_SUPPLY - circulatingSupply;
+  // Use totalSupply (all mined ELA) for remaining-to-mine, not just liquid supply
+  const remainingToMine = MAX_SUPPLY - totalSupply;
 
   return {
     currentBlock,
     blockTime,
     circulatingSupply,
+    totalSupply,
+    issuedPercentage,
     halvingNumber,
     nextHalvingBlock,
     blocksRemaining,
@@ -285,12 +312,12 @@ async function refreshData(): Promise<void> {
   isRefreshing = true;
 
   try {
-    const [blockData, supply] = await Promise.all([
+    const [blockData, supplyData] = await Promise.all([
       fetchLatestBlock(),
-      fetchCirculatingSupply()
+      fetchSupplyData()
     ]);
 
-    if (blockData && supply) {
+    if (blockData && supplyData) {
       // Reset failure counter on success
       consecutiveFailures = 0;
       
@@ -298,7 +325,9 @@ async function refreshData(): Promise<void> {
       memoryCache = buildBlockchainData(
         blockData.height,
         blockData.time,
-        supply,
+        supplyData.circulatingSupply,
+        supplyData.totalSupply,
+        supplyData.issuedPercentage,
         false // fresh from API
       );
 
@@ -306,7 +335,9 @@ async function refreshData(): Promise<void> {
       writeFileCache({
         currentBlock: blockData.height,
         blockTime: blockData.time,
-        circulatingSupply: supply,
+        circulatingSupply: supplyData.circulatingSupply,
+        totalSupply: supplyData.totalSupply,
+        issuedPercentage: supplyData.issuedPercentage,
         lastUpdated: Date.now()
       });
 
@@ -339,15 +370,19 @@ async function initializeCache(): Promise<void> {
       fileCache.currentBlock,
       fileCache.blockTime,
       fileCache.circulatingSupply,
+      fileCache.totalSupply ?? fileCache.circulatingSupply,
+      fileCache.issuedPercentage ?? Math.round((fileCache.circulatingSupply / MAX_SUPPLY) * 10000) / 100,
       true // from cache
     );
     logger.success(`Loaded from file cache: Block ${fileCache.currentBlock.toLocaleString()}`);
   } else {
-    // If no file cache, use fallback values
+    // If no file cache, use fallback values (totalSupply ~23.5M, 83% issued)
     memoryCache = buildBlockchainData(
-      2100000, // Near halving block
+      2200000,
       Math.floor(Date.now() / 1000),
-      26160841,
+      18050712,  // circulatingSupply
+      23555729,  // totalSupply (all mined)
+      83.47,
       true
     );
     logger.warn('No cache file found, using fallback values');
@@ -372,9 +407,11 @@ export function getBlockchainDataInstant(): BlockchainData {
   // Fallback if somehow cache isn't initialized
   logger.warn('Memory cache empty, using fallback');
   return buildBlockchainData(
-    2100000, // Near halving block
+    2200000,
     Math.floor(Date.now() / 1000),
-    26160841,
+    18050712,
+    23555729,
+    83.47,
     true
   );
 }
@@ -393,7 +430,8 @@ export function getFormattedBlockchainDataInstant() {
     currentBlockFormatted: data.currentBlock.toLocaleString(),
     nextHalvingBlockFormatted: data.nextHalvingBlock.toLocaleString(),
     blocksRemainingFormatted: data.blocksRemaining.toLocaleString(),
-    circulatingSupplyFormatted: formatSupply(data.circulatingSupply),
+    // Display totalSupply (all mined ELA) as the "Circulating" figure; circulatingSupply is liquid-only
+    circulatingSupplyFormatted: formatSupply(data.totalSupply),
     remainingToMineFormatted: formatSupply(data.remainingToMine),
     progressPercentFormatted: data.progressPercent.toFixed(2),
     currentRewardFormatted: data.currentReward.toFixed(3),

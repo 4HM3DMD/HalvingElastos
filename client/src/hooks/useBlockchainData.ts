@@ -8,8 +8,10 @@ export interface BlockchainData {
   // Raw data
   currentBlock: number;
   blockTime: number;
-  circulatingSupply: number;
-  
+  circulatingSupply: number; // Liquid/freely-tradeable ELA
+  totalSupply: number;       // All mined ELA (incl. locked, staked, treasury)
+  issuedPercentage: number;  // totalSupply / maxSupply * 100
+
   // Calculated
   halvingNumber: number;
   nextHalvingBlock: number;
@@ -57,15 +59,17 @@ interface UseBlockchainDataResult {
 // Calculate derived values for fallback
 function calculateFallbackData(): BlockchainData {
   // Use approximate current block (will be updated from API instantly)
-  const currentBlock = 2100000;
+  const currentBlock = 2200000;
   const halvingNumber = Math.floor(currentBlock / HALVING_INTERVAL);
   const nextHalvingBlock = (halvingNumber + 1) * HALVING_INTERVAL;
   const blocksRemaining = nextHalvingBlock - currentBlock;
   const progressPercent = ((currentBlock % HALVING_INTERVAL) / HALVING_INTERVAL) * 100;
-  const circulatingSupply = 26160841;
+  const circulatingSupply = 18050712;  // liquid only
+  const totalSupply = 23555729;        // all mined ELA
+  const issuedPercentage = 83.47;
   const currentReward = 3.044 / Math.pow(2, halvingNumber);
   const afterHalvingReward = currentReward / 2;
-  const remainingToMine = 28219999 - circulatingSupply;
+  const remainingToMine = 28219999 - totalSupply; // based on totalSupply, not liquid
 
   // Calculate estimated date
   const secondsRemaining = blocksRemaining * AVG_BLOCK_TIME_SECONDS;
@@ -81,6 +85,8 @@ function calculateFallbackData(): BlockchainData {
     currentBlock,
     blockTime: Math.floor(Date.now() / 1000),
     circulatingSupply,
+    totalSupply,
+    issuedPercentage,
     halvingNumber,
     nextHalvingBlock,
     blocksRemaining,
@@ -93,7 +99,8 @@ function calculateFallbackData(): BlockchainData {
     currentBlockFormatted: currentBlock.toLocaleString(),
     nextHalvingBlockFormatted: nextHalvingBlock.toLocaleString(),
     blocksRemainingFormatted: blocksRemaining.toLocaleString(),
-    circulatingSupplyFormatted: `~${(circulatingSupply / 1000000).toFixed(1)}M`,
+    // Show totalSupply (all mined) as "Circulating" to match explorer's issued %
+    circulatingSupplyFormatted: `~${(totalSupply / 1000000).toFixed(1)}M`,
     remainingToMineFormatted: `~${(remainingToMine / 1000000).toFixed(1)}M`,
     progressPercentFormatted: progressPercent.toFixed(2),
     currentRewardFormatted: currentReward.toFixed(3),

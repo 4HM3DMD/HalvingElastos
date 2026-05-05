@@ -153,12 +153,12 @@ export const ElastosHalving = (): JSX.Element => {
   const nextHalvingOrdinal = getOrdinalSuffix(nextHalvingNumber);
   
   // Calculate dynamic percentages and dates
-  const circulatingSupply = blockchainData?.circulatingSupply || 26160841;
   const maxSupply = 28219999;
-  const issuedPercent = Math.round((circulatingSupply / maxSupply) * 100);
-  
-  // Calculate years until final supply (approximate)
-  const remainingToMine = blockchainData?.remainingToMine || (maxSupply - circulatingSupply);
+  // Use issuedPercentage from API (totalSupply / maxSupply); fall back to calculation
+  const issuedPercent = Math.round(blockchainData?.issuedPercentage ?? ((blockchainData?.totalSupply ?? 23555729) / maxSupply * 100));
+
+  // remainingToMine is maxSupply - totalSupply (all mined), not liquid supply
+  const remainingToMine = blockchainData?.remainingToMine || (maxSupply - (blockchainData?.totalSupply ?? 23555729));
   const avgBlocksPerYear = 365.25 * 24 * 30; // ~262,980 blocks/year at 2min
   const yearsRemaining = Math.round(remainingToMine / (blockchainData?.currentReward || 1.522) / avgBlocksPerYear);
   
