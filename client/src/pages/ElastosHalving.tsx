@@ -891,16 +891,16 @@ export const ElastosHalving = (): JSX.Element => {
                 </div>
               </div>
 
-              {/* Circulating */}
+              {/* Total Supply */}
               <div className="glass-panel-accent rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
                 <div className="text-white/40 text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 sm:mb-2" style={{ fontFamily: "'Geist', system-ui, sans-serif" }}>
-                  Circulating
+                  Total Supply
                 </div>
                 <div className="text-white text-lg sm:text-xl md:text-2xl font-medium" style={{ fontFamily: "'Geist', system-ui, sans-serif", fontVariantNumeric: 'tabular-nums' }}>
-                  {blockchainData?.circulatingSupplyFormatted || "~26M"}
+                  {blockchainData?.circulatingSupplyFormatted || "~23.6M"}
                 </div>
                 <div className="text-white/30 text-[9px] sm:text-[10px] mt-0.5" style={{ fontFamily: "'Geist', system-ui, sans-serif" }}>
-                  {issuedPercent}% issued
+                  {issuedPercent}% mined
                 </div>
               </div>
 
